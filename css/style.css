@@ -36,7 +36,7 @@ body {
 .content {
     max-width: 50rem;
     margin: 0 auto;
-    padding: 2.5rem 1.25rem 3.75rem;
+    padding: 1.25rem 1.25rem 3.75rem;
 }
 
 /* Logo */
@@ -125,12 +125,12 @@ body {
 /* Typography */
 h1, h2 {
     font-family: 'Prohibition', sans-serif;
-    margin: 2rem 0 1.5rem;
+    margin: 1.5rem 0 1.25rem;
 }
 
 h1 {
     font-size: 2.5rem;
-    margin-top: 3rem;
+    margin-top: 2rem;
 }
 
 h2 {
@@ -206,17 +206,19 @@ footer {
     
     .logo-container {
         position: relative;
-        width: 35vw;
-        margin: 1.25rem auto 2.5rem;
+        width: 60vw;
+        max-width: none;
+        margin: 1rem auto 2rem;
         text-align: center;
         left: 0;
     }
     
     .content {
-        padding-top: 3.75rem;
+        padding-top: 2rem;
     }
     
     h1 {
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
     }
 }
