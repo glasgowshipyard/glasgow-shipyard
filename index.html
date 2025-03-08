@@ -9,8 +9,15 @@
 </head>
 <body>
     <div class="lang-toggle">
-        <button class="active" data-lang="sco">Scots</button>
-        <button data-lang="en">English</button>
+        <button class="active" data-lang="sco">SCOTS</button>
+        <button data-lang="en">EN-GB</button>
+    </div>
+    
+    <div class="lang-toggle-mobile">
+        <select id="lang-select">
+            <option value="sco" selected>SCOTS</option>
+            <option value="en">EN-GB</option>
+        </select>
     </div>
 
     <div class="logo-container">
@@ -104,32 +111,47 @@
     </footer>
 
     <script>
-        // Simple language toggle
+        // Simple language toggle for buttons
         document.querySelectorAll('.lang-toggle button').forEach(button => {
             button.addEventListener('click', function() {
-                const lang = this.getAttribute('data-lang');
-                
-                // Update active button
-                document.querySelectorAll('.lang-toggle button').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                this.classList.add('active');
-                
-                // Show selected language content
-                document.querySelectorAll('.lang-content').forEach(content => {
-                    content.style.display = 'none';
-                });
-                document.querySelector(`.lang-content.${lang}`).style.display = 'block';
-                
-                // Update html lang attribute
-                document.documentElement.setAttribute('lang', lang);
-                
-                // Update page title
-                document.title = lang === 'sco' 
-                    ? 'Glasgow Shipyard - Building Whit Matters' 
-                    : 'Glasgow Shipyard - Building What Matters';
+                switchLanguage(this.getAttribute('data-lang'));
             });
         });
+        
+        // Language toggle for mobile dropdown
+        document.getElementById('lang-select')?.addEventListener('change', function() {
+            switchLanguage(this.value);
+        });
+        
+        // Shared language switching function
+        function switchLanguage(lang) {
+            // Update active button
+            document.querySelectorAll('.lang-toggle button').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Update dropdown
+            if(document.getElementById('lang-select')) {
+                document.getElementById('lang-select').value = lang;
+            }
+            
+            // Show selected language content
+            document.querySelectorAll('.lang-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            document.querySelector(`.lang-content.${lang}`).style.display = 'block';
+            
+            // Update html lang attribute
+            document.documentElement.setAttribute('lang', lang);
+            
+            // Update page title
+            document.title = lang === 'sco' 
+                ? 'Glasgow Shipyard - Building Whit Matters' 
+                : 'Glasgow Shipyard - Building What Matters';
+        }
     </script>
 </body>
 </html>
