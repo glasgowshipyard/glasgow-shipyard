@@ -222,3 +222,29 @@ footer {
         margin-bottom: 1rem;
     }
 }
+/* Contact form: honeypot hidden from people, Turnstile and status line */
+.contact-trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.contact-turnstile {
+    margin-bottom: 1rem;
+}
+
+.contact-turnstile:empty {
+    display: none;
+}
+
+.contact-status {
+    margin-top: 1rem;
+    min-height: 1.5em;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}

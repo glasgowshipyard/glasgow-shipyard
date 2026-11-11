@@ -64,12 +64,6 @@
             <div class="divider"></div>
             
             <h2>Gies A Shout</h2>
-            <form class="contact-form" action="https://formspree.io/f/xqapznad" method="POST">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <textarea name="message" rows="5" placeholder="Message" required></textarea>
-                <button type="submit">Send</button>
-            </form>
         </div>
 
         <!-- English content (hidden by default) -->
@@ -97,13 +91,22 @@
             <div class="divider"></div>
             
             <h2>Get In Touch</h2>
-            <form class="contact-form" action="https://formspree.io/f/xqapznad" method="POST">
-                <input type="text" name="name" placeholder="Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <textarea name="message" rows="5" placeholder="Message" required></textarea>
-                <button type="submit">Send</button>
-            </form>
         </div>
+
+        <!-- One form for both languages: messages go to /contact (functions/contact), then ops@ via Resend -->
+        <form id="contact" class="contact-form" action="/contact" method="POST">
+            <input type="text" name="name" placeholder="Name" maxlength="100" required>
+            <input type="email" name="email" placeholder="Email" maxlength="254" required>
+            <textarea name="message" rows="5" placeholder="Message" maxlength="5000" required></textarea>
+            <div class="contact-trap" aria-hidden="true">
+                <label for="contact-website">Website</label>
+                <input id="contact-website" type="text" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="t" value="">
+            <div class="contact-turnstile"></div>
+            <button type="submit">Send</button>
+            <p class="contact-status" role="status" aria-live="polite"></p>
+        </form>
     </main>
     
     <footer>
@@ -152,6 +155,70 @@
                 ? 'Glasgow Shipyard - Building Whit Matters' 
                 : 'Glasgow Shipyard - Building What Matters';
         }
+    </script>
+    <script>
+        // Contact form: fetch a fresh signed token (and the Turnstile key, once configured),
+        // then submit with fetch and show the result in the current language.
+        (function () {
+            const form = document.getElementById('contact');
+            const status = form.querySelector('.contact-status');
+            const button = form.querySelector('button');
+            const messages = {
+                sending: { sco: 'Sendin…', en: 'Sending…' },
+                sent: { sco: 'Ta! Yer message is awa. We\'ll get back tae ye.', en: 'Thanks! Your message is on its way. We\'ll get back to you.' },
+                invalid: { sco: 'That email disnae look richt.', en: 'That email doesn\'t look right.' },
+                missing: { sco: 'Gie us yer name an a message.', en: 'Please add your name and a message.' },
+                retry: { sco: 'That wis quick! Gie it a second an try again.', en: 'That was quick! Give it a second and try again.' },
+                verify: { sco: 'We couldnae check ye\'re human. Try again.', en: 'We couldn\'t check you\'re human. Please try again.' },
+                busy: { sco: 'Ower mony messages the noo. Try again later.', en: 'Too many messages right now. Please try again later.' },
+                error: { sco: 'Somethin went wrang. Try again later.', en: 'Something went wrong. Please try again later.' },
+            };
+            const say = (key) => {
+                const lang = document.documentElement.lang === 'en' ? 'en' : 'sco';
+                status.textContent = messages[key][lang];
+            };
+            let widget = null;
+
+            async function loadToken() {
+                const res = await fetch('/contact/token', { cache: 'no-store' });
+                if (!res.ok) throw new Error('token ' + res.status);
+                const data = await res.json();
+                form.elements.t.value = data.t;
+                if (data.siteKey && widget === null) {
+                    widget = 'loading';
+                    window.onContactTurnstile = () => {
+                        widget = turnstile.render(form.querySelector('.contact-turnstile'), {
+                            sitekey: data.siteKey, theme: 'light', size: 'flexible',
+                        });
+                    };
+                    const s = document.createElement('script');
+                    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onContactTurnstile&render=explicit';
+                    s.async = true;
+                    document.head.appendChild(s);
+                }
+            }
+            loadToken().catch(() => {});
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                button.disabled = true;
+                say('sending');
+                try {
+                    if (!form.elements.t.value) await loadToken();
+                    const res = await fetch('/contact', { method: 'POST', body: new FormData(form) });
+                    const { s } = await res.json();
+                    say(messages[s] ? s : 'error');
+                    if (s === 'sent') form.reset();
+                } catch (err) {
+                    say('error');
+                }
+                // Tokens are single-use for Turnstile; get fresh ones for any further message.
+                if (widget && widget !== 'loading' && window.turnstile) turnstile.reset(widget);
+                form.elements.t.value = '';
+                loadToken().catch(() => {});
+                button.disabled = false;
+            });
+        })();
     </script>
 </body>
 </html>

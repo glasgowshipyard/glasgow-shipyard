@@ -1,0 +1,21 @@
+# Cloudflare Pages config. Once this file is deployed it is the source of truth: the matching
+# settings can be seen but not edited in the dashboard. Secrets are still set in the dashboard
+# (Workers & Pages -> glasgow-shipyard -> Settings -> Variables and Secrets):
+#   CONTACT_SECRET        random string, HMAC key for form tokens
+#   RESEND_API_KEY        Resend API key
+#   TURNSTILE_SECRET_KEY  Turnstile widget secret
+name = "glasgow-shipyard"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-11-01"
+
+[vars]
+CONTACT_TO = "ops@glasgowshipyard.com"
+# Must be on a domain verified in Resend (craigzielinski.com is).
+CONTACT_FROM = "Glasgow Shipyard contact form <contact-form@craigzielinski.com>"
+# Public key of the Turnstile widget. Turnstile is enforced only once this and the secret are set.
+TURNSTILE_SITE_KEY = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "glasgowshipyard"
+database_id = "REPLACE_WITH_DATABASE_ID"
