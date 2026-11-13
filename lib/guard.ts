@@ -25,7 +25,8 @@ export interface Env {
 const PER_IP_PER_HOUR = 3;
 const PER_EMAIL_PER_DAY = 3;
 // Resend's free plan allows 100 emails a day across the account, shared with the
-// craigzielinski.com newsletter (whose own cap is 40), so keep this well under the rest.
+// craigzielinski.com newsletter (capped at 40), Project MARTAC and Respec Training sign-in
+// emails, so keep this small.
 const DAILY_CAP = 15;
 
 const HOUR_MS = 60 * 60 * 1000;

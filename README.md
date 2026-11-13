@@ -17,6 +17,8 @@ newsletter signup (craig-zielinski repo, `SIGNUP-PROTECTION.md`), in `lib/guard.
 5. **Cloudflare Turnstile** (enforced only when both keys are set)
 6. **Send limits** in D1: 3 per IP per hour, 3 per sender address per day, 15 per day in total. Resend's free
    plan allows 100 emails a day across the account, shared with the craigzielinski.com newsletter (capped at 40)
+   and the Project MARTAC and Respec Training sign-in emails. Its 3 custom domains are taken (craigzielinski.com,
+   noperator.com, respectraining.com), which is why the form sends from craigzielinski.com
 
 Bots get the same "sent" answer as people, so they learn nothing. Messages arrive with the sender as reply-to.
 
